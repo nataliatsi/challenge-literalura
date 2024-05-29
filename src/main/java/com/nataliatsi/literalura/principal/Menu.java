@@ -1,36 +1,29 @@
 package com.nataliatsi.literalura.principal;
 
-import com.nataliatsi.literalura.model.DadosLivro;
-import com.nataliatsi.literalura.service.ConsumoApi;
-import com.nataliatsi.literalura.service.ConverteDados;
+import com.nataliatsi.literalura.model.Response;
+import com.nataliatsi.literalura.service.ApiService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
 public class Menu {
     private Scanner scanner = new Scanner(System.in);
-    private ConsumoApi consumo = new ConsumoApi();
-    private ConverteDados conversor = new ConverteDados();
-
+    private ApiService consumo = new ApiService();
     private final String ENDERECO = "https://gutendex.com/books";
-    private List<DadosLivro> dadosLivros = new ArrayList<>();
 
-//    public Menu(LivrosRepository repository) {
-//    }
+    private List<Response> dadosLivros = new ArrayList<>();
 
     public Menu() {
-
     }
 
     public void exibeMenu() {
-
         int opc = -1;
         while (opc != 0) {
             var menu = """
                     1 - Buscar livro
-                                    
-                    0 - Sair                                 
+                    0 - Sair                               
                     """;
 
             System.out.println(menu);
@@ -46,24 +39,31 @@ public class Menu {
                 default:
                     System.out.println("Opção inválida");
             }
-
         }
     }
 
-    private DadosLivro getDadosLivro() {
-        //System.out.println("Digite o nome do livro: ");
-        System.out.println("Buscando por Frankenstien");
-        var livroNome = "frankenstein";
-       var json = consumo.obterDados(ENDERECO + "?search=" + livroNome.replace(" ", "%20"));
-
-        DadosLivro dados = conversor.obterDados(json, DadosLivro.class);
-        return dados;
+    private Response getDadosLivro() {
+        System.out.println("Buscando dados de livros...");
+        return consumo.obterDados(ENDERECO, Response.class);
     }
 
-
     private void buscarLivroWeb() {
-        DadosLivro dados = getDadosLivro();
-        dadosLivros.add(dados);
-        System.out.println(dados);
+        Response dados = getDadosLivro();
+        if (dados != null) {
+            dadosLivros.add(dados);
+            var livro = dados.livros().get(1);
+            var idiomas = livro.idiomas();
+            var autores = livro.autores();
+
+            System.out.println("Livro na posição 1");
+            System.out.println("Título: " + livro.titulo());
+            autores.forEach(autor -> System.out.println(autor.nome() + ", "));
+            System.out.println("Disponível no(s) idioma(s): ");
+            for (String idioma : idiomas) {
+                System.out.println("- " + idioma);
+            }
+        } else {
+            System.out.println("No data found.");
+        }
     }
 }
