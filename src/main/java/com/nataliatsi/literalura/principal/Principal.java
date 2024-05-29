@@ -20,12 +20,11 @@ public class Principal {
         int opc = -1;
         while (opc != 0) {
             var menu = """
-                    1 - Buscar livro pos(1)
-                    x - Buscar livro pelo título
-                    x - Listar livros registrados
-                    x - Listar autores registrados
-                    x - Listar autores vivos em um determinado ano
-                    x - Listar livros em determinado idioma
+                    1 - Buscar livro pelo título
+                    2 - Listar livros registrados
+                    3 - Listar autores registrados
+                    4 - Listar autores vivos em um determinado ano
+                    5 - Listar livros em determinado idioma
                     
                     0 - Sair                              \s
                     """;
@@ -36,7 +35,7 @@ public class Principal {
 
             switch (opc) {
                 case 1:
-                    buscarLivroWeb();
+                    buscarLivroPorTitulo();
                     break;
                 case 0:
                     break;
@@ -77,5 +76,36 @@ public class Principal {
         }
 
         return conversor.obterDados(json, Response.class);
+    }
+
+    private void buscarLivroPorTitulo() {
+        System.out.print("Digite o título do livro: ");
+        String titulo = scanner.nextLine();
+        System.out.println(" ");
+
+        String urlComTitulo = ENDERECO + "?search=" + titulo.replace(" ", "%20");
+        var json = consumo.obterDados(urlComTitulo);
+
+        if (json == null || json.isEmpty()) {
+            System.out.println("Nenhum dado retornado da API.");
+            return;
+        }
+
+        Response resposta = conversor.obterDados(json, Response.class);
+
+        if (resposta != null && !resposta.livros().isEmpty()) {
+            resposta.livros().forEach(livro -> {
+                System.out.println("Título: " + livro.titulo());
+                livro.autores().forEach(autor -> System.out.println("Autor: " + autor.nome() + " " + (autor.anoNascimento() != null ? autor.anoNascimento() : " Ano de Nascimento Desconhecido")+ "  - " + (autor.anoFalecimento() != null ? autor.anoFalecimento() : "Ano de Falecimento Desconhecido")));
+
+                var idiomasEnum = livro.getIdiomasAsEnum();
+                System.out.println("Idioma(s): ");
+                idiomasEnum.forEach(idioma -> System.out.println("- " + idioma));
+
+                System.out.println("---------");
+            });
+        } else {
+            System.out.println("Nenhum livro encontrado com o título fornecido.");
+        }
     }
 }
