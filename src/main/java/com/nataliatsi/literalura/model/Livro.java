@@ -25,6 +25,9 @@ public class Livro {
     @Enumerated(EnumType.STRING)
     private Idioma idiomaEnum;
 
+    public Livro() {
+    }
+
     public Long getId() {
         return id;
     }
@@ -60,10 +63,10 @@ public class Livro {
     @Override
     public String toString() {
         return "Livro {" +
-                " Id: " + id +
-                ", Título: '" + titulo + '\'' +
+                " Título: '" + titulo + '\'' +
                 ", Autor(es): " + (autor != null ? autor.toString() : "Nenhum") +
                 ", Idioma(s): " + (idiomaEnum != null ? idiomaEnum.toString() : "Desconhecido") +
                 '}';
     }
+
 }

@@ -3,7 +3,10 @@ package com.nataliatsi.literalura.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
+import com.nataliatsi.literalura.model.Livro;
+import com.nataliatsi.literalura.model.LivroDTO;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,4 +21,5 @@ public class ConverteDados implements IConverteDados {
             throw new RuntimeException(e);
         }
     }
+
 }
