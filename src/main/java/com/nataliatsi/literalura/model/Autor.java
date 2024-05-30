@@ -1,9 +1,20 @@
 package com.nataliatsi.literalura.model;
 
+import jakarta.persistence.*;
+
+import java.util.List;
+
+@Entity
+@Table(name = "autores")
 public class Autor {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String nome;
     private Integer anoNascimento, anoFalecimento;
+
+    @ManyToMany(mappedBy = "autor")
+    private List<Livro> livroList;
 
     public Integer getId() {
         return id;
@@ -35,6 +46,14 @@ public class Autor {
 
     public void setAnoFalecimento(Integer anoFalecimento) {
         this.anoFalecimento = anoFalecimento;
+    }
+
+    public List<Livro> getLivroList() {
+        return livroList;
+    }
+
+    public void setLivroList(List<Livro> livroList) {
+        this.livroList = livroList;
     }
 
     @Override

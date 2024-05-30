@@ -1,11 +1,28 @@
 package com.nataliatsi.literalura.model;
 
+import jakarta.persistence.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name ="livros")
 public class Livro {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String titulo;
-    private List<Autor> autorList;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "livro_autor",
+            joinColumns = @JoinColumn(name = "livro_id"),
+            inverseJoinColumns = @JoinColumn(name = "autor_id")
+    )
+    private List<Autor> autor = new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
     private Idioma idiomaEnum;
 
     public Long getId() {
@@ -25,11 +42,11 @@ public class Livro {
     }
 
     public List<Autor> getAutorList() {
-        return autorList;
+        return autor;
     }
 
-    public void setAutorList(List<Autor> autorList) {
-        this.autorList = autorList;
+    public void setAutorList(List<Autor> autor) {
+        this.autor = autor;
     }
 
     public Idioma getIdiomaEnum() {
@@ -45,7 +62,7 @@ public class Livro {
         return "Livro {" +
                 " Id: " + id +
                 ", Título: '" + titulo + '\'' +
-                ", Autor(es): " + (autorList != null ? autorList.toString() : "Nenhum") +
+                ", Autor(es): " + (autor != null ? autor.toString() : "Nenhum") +
                 ", Idioma(s): " + (idiomaEnum != null ? idiomaEnum.toString() : "Desconhecido") +
                 '}';
     }

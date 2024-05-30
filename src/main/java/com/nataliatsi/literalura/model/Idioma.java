@@ -4,8 +4,7 @@ public enum Idioma {
     EN("en"),
     ES("es"),
     FR("fr"),
-    PT("pt"),
-    OTHER("other");
+    PT("pt");
 
     private final String code;
 
@@ -23,6 +22,6 @@ public enum Idioma {
                 return idioma;
             }
         }
-        return OTHER;
+        throw new IllegalArgumentException("Nenhum idioma encontrado para a string fornecida: " + code);
     }
 }
