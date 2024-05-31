@@ -36,7 +36,7 @@ public class Principal {
         int opc = -1;
         while (opc != 0) {
             var menu = """
-                    1 - Cadastrar livro
+                    1 - Cadastrar livro(s)
                     2 - Buscar livro pelo título
                     3 - Listar livros registrados
                     4 - Listar autores registrados
@@ -141,7 +141,13 @@ public class Principal {
         scanner.nextLine();
 
         List<Autor> autores = livroService.listarAutoresVivosEmDeterminadoAno(ano);
-        autores.forEach(System.out::println);
+
+        if(!autores.isEmpty()){
+            autores.forEach(System.out::println);
+        } else {
+            System.out.println("Não há autor(es) vivo(s) no ano buscado.");
+        }
+
     }
 
     private void buscarLivrosPorIdioma() {

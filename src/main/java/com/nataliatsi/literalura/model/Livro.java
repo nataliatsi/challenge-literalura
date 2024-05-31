@@ -60,9 +60,9 @@ public class Livro {
     @Override
     public String toString() {
         return
-                " Título: '" + titulo + '\'' +
+                " Livro: '" + titulo + '\'' +
                 ", Autor(es): " + (autor != null ? autor.toString() : "Nenhum") +
-                ", Idioma(s): " + (idiomaEnum != null ? idiomaEnum.toString() : "Desconhecido");
+                ", Idioma: " + (idiomaEnum != null ? idiomaEnum.toString() : "Desconhecido");
     }
 
 }
