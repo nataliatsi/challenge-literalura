@@ -38,6 +38,8 @@ public class LivroService {
                 livro.setAutorList(autores);
                 if (!livroDTO.getIdiomasAsEnum().isEmpty()) {
                     livro.setIdiomaEnum(livroDTO.getIdiomasAsEnum().get(0));
+                } else {
+                    livro.setIdiomaEnum(Idioma.OTHER);
                 }
 
                 livroRepository.save(livro);

@@ -36,11 +36,12 @@ public class Principal {
         int opc = -1;
         while (opc != 0) {
             var menu = """
-                    1 - Buscar livro pelo título
-                    2 - Listar livros registrados
-                    3 - Listar autores registrados
-                    4 - Listar autores vivos em um determinado ano
-                    5 - Listar livros em determinado idioma
+                    1 - Cadastrar livro
+                    2 - Buscar livro pelo título
+                    3 - Listar livros registrados
+                    4 - Listar autores registrados
+                    5 - Listar autores vivos em um determinado ano
+                    6 - Listar livros em determinado idioma
                     
                     0 - Sair                              \s
                     """;
@@ -51,18 +52,21 @@ public class Principal {
 
             switch (opc) {
                 case 1:
-                    buscarLivros();
+                    buscarESalvarLivrosDeAPI();
                     break;
                 case 2:
-                    listarLivros();
+                    buscarLivroPorTitulo();
                     break;
                 case 3:
-                    listarAutores();
+                    listarLivros();
                     break;
                 case 4:
-                    listarAutoresVivos();
+                    listarAutores();
                     break;
                 case 5:
+                    listarAutoresVivos();
+                    break;
+                case 6:
                     buscarLivrosPorIdioma();
                     break;
                 case 0:
@@ -85,23 +89,25 @@ public class Principal {
         return conversor.obterDados(json, Response.class);
     }
 
-//    private void buscarESalvarLivrosDeAPI() {
-//        System.out.print("Digite o título do livro: ");
-//        String titulo = scanner.nextLine();
-//
-//        Response response = getDadosLivro(titulo);
-//        if (response != null) {
-//            livroService.salvarLivro(response);
-//            System.out.println("Livro(s) salvo(s) com sucesso.");
-//        } else {
-//            System.out.println("Falha ao obter dados da API.");
-//        }
-//    }
-
-    public void buscarLivros(){
+    private void buscarESalvarLivrosDeAPI() {
+        System.out.println("Buscar livros na API Gutendex e salvar no banco de dados");
+        System.out.println("-------------");
         System.out.print("Digite o título do livro: ");
         String titulo = scanner.nextLine();
 
+        Response response = getDadosLivro(titulo);
+        if (response != null) {
+            livroService.salvarLivro(response);
+            System.out.println("Livro(s) salvo(s) com sucesso.");
+        } else {
+            System.out.println("Falha ao obter dados da API.");
+        }
+    }
+
+
+    private void buscarLivroPorTitulo(){
+        System.out.print("Digite o nome do livro: ");
+        String titulo = scanner.nextLine();
         var livro = livroService.buscarPorTitulo(titulo);
 
         if(livro.isPresent()){
@@ -113,33 +119,9 @@ public class Principal {
             System.out.println("Idioma: " + dados.getIdiomaEnum());
             System.out.println("-------------");
         } else {
-            Response response = getDadosLivro(titulo);
-            if (response != null) {
-                livroService.salvarLivro(response);
-                System.out.println("Livro(s) salvo(s) com sucesso.");
-            } else {
-                System.out.println("Falha ao obter dados da API.");
-            }
+            System.out.println("Livro não encontrado");
         }
     }
-
-//    private void buscarLivroPorTitulo(){
-//        System.out.print("Digite o nome do livro: ");
-//        String titulo = scanner.nextLine();
-//        var livro = livroService.buscarPorTitulo(titulo);
-//
-//        if(livro.isPresent()){
-//            var dados = livro.get();
-//            System.out.println("Título: " + dados.getTitulo());
-//            for(var autores : dados.getAutorList()){
-//                System.out.println("Autor: " + autores.getNome() + " " + autores.getAnoNascimento() + " - " + autores.getAnoFalecimento());
-//            }
-//            System.out.println("Idioma: " + dados.getIdiomaEnum());
-//            System.out.println("-------------");
-//        } else {
-//            System.out.println("Livro não encontrado");
-//        }
-//    }
 
     private void listarLivros(){
         List<Livro> livros = livroService.listarLivrosRegistrados();
@@ -163,7 +145,7 @@ public class Principal {
     }
 
     private void buscarLivrosPorIdioma() {
-        System.out.print("Digite o código do idioma (ex: en, es, fr, pt): ");
+        System.out.print("Digite o código do idioma (ex: en, es, fr, pt ou other): ");
         String codigoIdioma = scanner.nextLine().trim();
 
         Idioma idioma;

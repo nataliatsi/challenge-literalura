@@ -13,7 +13,6 @@ public class Livro {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
     private String titulo;
 
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
