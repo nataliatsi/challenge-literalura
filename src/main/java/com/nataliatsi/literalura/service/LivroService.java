@@ -1,12 +1,11 @@
 package com.nataliatsi.literalura.service;
 
-import com.nataliatsi.literalura.model.Autor;
-import com.nataliatsi.literalura.model.AutorDTO;
-import com.nataliatsi.literalura.model.Livro;
-import com.nataliatsi.literalura.model.LivroDTO;
+import com.nataliatsi.literalura.model.*;
 import com.nataliatsi.literalura.repository.AutorRepository;
 import com.nataliatsi.literalura.repository.LivroRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,25 +21,47 @@ public class LivroService {
     @Autowired
     private LivroRepository livroRepository;
 
-//    public void salvarLivro(Livro livro) {
-//        livroRepository.save(livro);
-//    }
+    @Transactional
+    public void salvarLivro(Response response) {
+        List<LivroDTO> livrosDTO = response.livros();
+        for (LivroDTO livroDTO : livrosDTO) {
+            List<Autor> autores = livroDTO.autores().stream()
+                    .map(this::converterAutorDTO)
+                    .collect(Collectors.toList());
 
-//    public void salvarLivro(LivroDTO livroDTO) {
-//        List<Autor> autores = livroDTO.autores().stream()
-//                .map(this::converterAutorDTO)
-//                .collect(Collectors.toList());
-//
-//        autores.forEach(autorRepository::save);
-//
-//        Livro livro = new Livro();
-//        livro.setTitulo(livroDTO.titulo());
-//        livro.setAutorList(autores);
-//        livro.setIdiomasEnum(livroDTO.getIdiomasAsEnum());
-//
-//        livroRepository.save(livro);
-//    }
+            try {
 
+                autorRepository.saveAll(autores);
+
+                Livro livro = new Livro();
+                livro.setTitulo(livroDTO.titulo());
+                livro.setAutorList(autores);
+                if (!livroDTO.getIdiomasAsEnum().isEmpty()) {
+                    livro.setIdiomaEnum(livroDTO.getIdiomasAsEnum().get(0));
+                }
+
+                livroRepository.save(livro);
+
+            } catch (DataAccessException e) {
+                System.err.println("Erro ao acessar dados do banco: " + e.getMessage());
+                e.printStackTrace();
+                throw new RuntimeException("Erro ao salvar dados no banco.", e);
+
+            } catch (Exception e) {
+                System.err.println("Erro inesperado: " + e.getMessage());
+                e.printStackTrace();
+                throw new RuntimeException("Erro inesperado ao salvar livro.", e);
+            }
+        }
+    }
+
+    private Autor converterAutorDTO(AutorDTO autorDTO) {
+        Autor autor = new Autor();
+        autor.setNome(autorDTO.nome());
+        autor.setAnoNascimento(autorDTO.anoNascimento());
+        autor.setAnoFalecimento(autorDTO.anoFalecimento());
+        return autor;
+    }
 
     public Optional<Livro> buscarPorTitulo(String nomeLivro){
         return livroRepository.findByTitulo(nomeLivro);
@@ -54,9 +75,9 @@ public class LivroService {
         return autorRepository.findAll();
     }
 
-//    public List<Livro> listarLivrosPorIdioma(String idioma){
-//        return livroRepository.findByIdioma(idioma);
-//    }
+    public List<Livro> listarLivrosPorIdioma(Idioma idioma){
+        return livroRepository.findByIdiomaEnum(idioma);
+    }
 
     public List<Autor> listarAutoresVivosEmDeterminadoAno(int ano){
         return autorRepository.autoresVivos(ano);

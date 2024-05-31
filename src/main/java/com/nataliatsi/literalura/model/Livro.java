@@ -12,9 +12,11 @@ public class Livro {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(unique = true)
     private String titulo;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(
             name = "livro_autor",
             joinColumns = @JoinColumn(name = "livro_id"),
@@ -30,10 +32,6 @@ public class Livro {
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getTitulo() {
@@ -62,11 +60,10 @@ public class Livro {
 
     @Override
     public String toString() {
-        return "Livro {" +
+        return
                 " Título: '" + titulo + '\'' +
                 ", Autor(es): " + (autor != null ? autor.toString() : "Nenhum") +
-                ", Idioma(s): " + (idiomaEnum != null ? idiomaEnum.toString() : "Desconhecido") +
-                '}';
+                ", Idioma(s): " + (idiomaEnum != null ? idiomaEnum.toString() : "Desconhecido");
     }
 
 }
